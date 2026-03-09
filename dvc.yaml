@@ -16,9 +16,6 @@ stages:
       - data/processed/test.csv
     outs:
       - models/random_forest.pkl
-    metrics:
-      - metrics/train_metrics.json:
-          cache: false
 
   tune:
     cmd: python tune.py
@@ -28,6 +25,3 @@ stages:
       - data/processed/test.csv
     outs:
       - models/best_svm.pkl
-    metrics:
-      - metrics/tune_metrics.json:
-          cache: false

@@ -1,0 +1,62 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python preprocess.py
+    deps:
+    - path: preprocess.py
+      hash: md5
+      md5: 2a8480047807e6ac5ac304c12bb9d706
+      size: 3310
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 1080975205bd2f119004f9748eb53651
+      size: 2452
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 6c0bef94856be19960f98b87fdbe42c2
+      size: 9442
+    - path: data/raw/iris.csv
+      hash: md5
+      md5: 42615765a885ddf54427f12c34a0a070
+      size: 4551
+  train:
+    cmd: python train.py
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 1080975205bd2f119004f9748eb53651
+      size: 2452
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 6c0bef94856be19960f98b87fdbe42c2
+      size: 9442
+    - path: train.py
+      hash: md5
+      md5: 3ec73d3f1a15d816eea27e77c6513f22
+      size: 1793
+    outs:
+    - path: models/random_forest.pkl
+      hash: md5
+      md5: b7db571a77a6e09f4ccc01424cb6135b
+      size: 154816
+  tune:
+    cmd: python tune.py
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 1080975205bd2f119004f9748eb53651
+      size: 2452
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 6c0bef94856be19960f98b87fdbe42c2
+      size: 9442
+    - path: tune.py
+      hash: md5
+      md5: 8255849273c6b9af7b6c5b47271b0d71
+      size: 2831
+    outs:
+    - path: models/best_svm.pkl
+      hash: md5
+      md5: 894d6099f283df6a1c29bfa999c05d62
+      size: 2600
