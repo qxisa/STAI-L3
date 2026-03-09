@@ -1,8 +1,3 @@
-"""
-train.py
-Loads train.csv, trains a Random Forest classifier, logs to MLflow,
-and saves the trained model.
-"""
 
 import os
 import pickle
@@ -12,17 +7,14 @@ from sklearn.metrics import accuracy_score, f1_score, classification_report
 import mlflow
 import mlflow.sklearn
 
-# ── Paths ──────────────────────────────────────────────────────────────────
 PROC_DIR   = "data/processed"
 MODELS_DIR = "models"
 os.makedirs(MODELS_DIR, exist_ok=True)
 
-# ── Hyperparameters ────────────────────────────────────────────────────────
 N_ESTIMATORS = 100
 MAX_DEPTH     = None
 RANDOM_STATE  = 42
 
-# ── Load data ──────────────────────────────────────────────────────────────
 train_df = pd.read_csv(os.path.join(PROC_DIR, "train.csv"))
 test_df  = pd.read_csv(os.path.join(PROC_DIR, "test.csv"))
 
@@ -31,12 +23,10 @@ y_train = train_df["Species"]
 X_test  = test_df.drop("Species", axis=1)
 y_test  = test_df["Species"]
 
-# ── MLflow experiment ──────────────────────────────────────────────────────
 mlflow.set_experiment("iris-classification")
 
 with mlflow.start_run(run_name="random-forest-baseline"):
 
-    # ── Train ──────────────────────────────────────────────────────────────
     clf = RandomForestClassifier(
         n_estimators=N_ESTIMATORS,
         max_depth=MAX_DEPTH,
@@ -44,7 +34,6 @@ with mlflow.start_run(run_name="random-forest-baseline"):
     )
     clf.fit(X_train, y_train)
 
-    # ── Evaluate ───────────────────────────────────────────────────────────
     y_pred   = clf.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
     f1       = f1_score(y_test, y_pred, average="weighted")
@@ -54,7 +43,6 @@ with mlflow.start_run(run_name="random-forest-baseline"):
     print("\nClassification Report:")
     print(classification_report(y_test, y_pred))
 
-    # ── Log to MLflow ──────────────────────────────────────────────────────
     mlflow.log_param("n_estimators", N_ESTIMATORS)
     mlflow.log_param("max_depth",    MAX_DEPTH)
     mlflow.log_param("random_state", RANDOM_STATE)
@@ -65,7 +53,6 @@ with mlflow.start_run(run_name="random-forest-baseline"):
 
     mlflow.sklearn.log_model(clf, "random_forest_model")
 
-    # ── Save model locally ─────────────────────────────────────────────────
     model_path = os.path.join(MODELS_DIR, "random_forest.pkl")
     with open(model_path, "wb") as f:
         pickle.dump(clf, f)
